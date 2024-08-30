@@ -2,10 +2,8 @@ package com.chattranslator.data;
 
 import com.google.gson.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * A response list contains a list of separate supported language responses.
@@ -36,9 +34,8 @@ public class GetSupportedLanguagesResponseList {
      * @param json the JSON source of this object, e.g.
      *             <pre>{"languages": [{object(GetSupportedLanguagesResponseLanguage)}],}</pre>
      * @return an instance of this class on successful parsing
-     * @throws Exception on parse failure
      */
-    public static GetSupportedLanguagesResponseList fromJSON(final JsonElement json) throws Exception {
+    public static GetSupportedLanguagesResponseList fromJSON(final JsonElement json) {
         JsonObject jsonObject = json.getAsJsonObject();
         JsonArray languages = jsonObject.getAsJsonArray("languages");
 
@@ -46,7 +43,7 @@ public class GetSupportedLanguagesResponseList {
                 .range(0, languages.size())
                 .mapToObj(languages::get)
                 .map(GetSupportedLanguagesResponseLanguage::fromJSON)
-                .filter(obj -> obj != null)
+                .filter(Objects::nonNull)
                 .toArray(GetSupportedLanguagesResponseLanguage[]::new);
 
         return new GetSupportedLanguagesResponseList(response);

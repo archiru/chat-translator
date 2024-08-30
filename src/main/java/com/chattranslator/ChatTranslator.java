@@ -1,18 +1,16 @@
 package com.chattranslator;
 
-import com.chattranslator.data.GetSupportedLanguagesResponseLanguage;
 import com.chattranslator.data.GetSupportedLanguagesResponseList;
 import com.chattranslator.data.TranslateTextResponseList;
-import com.chattranslator.data.TranslateTextResponseTranslation;
 import com.chattranslator.ex.GoogleAPIException;
 import com.chattranslator.ex.GoogleAuthenticationException;
 import com.chattranslator.ex.GoogleException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.commons.text.StringEscapeUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,7 +39,8 @@ public class ChatTranslator {
     /**
      * An HTTP Client to access the Google Translate API.
      */
-    private OkHttpClient client = new OkHttpClient();
+    @Inject
+    private OkHttpClient client;
 
     /**
      * The list of supported languages by Google Translate API.
@@ -50,15 +49,12 @@ public class ChatTranslator {
 
     /**
      * Whether the user is authenticated.
-     */
-    private boolean authenticated = false;
+     * -- GETTER --
+     *
 
-    /**
-     * @return true if the the chat translator is authenticated to Google Cloud Platform, false otherwise
      */
-    public boolean isAuthenticated() {
-        return this.authenticated;
-    }
+    @Getter
+    private boolean authenticated = false;
 
     /**
      * Un-authenticate your credentials. This clears saved config and any session data used for chat translation.
@@ -140,7 +136,7 @@ public class ChatTranslator {
             }
             requestJson.addProperty("target", targetLanguage);
             requestJson.addProperty("q", text);
-            log.debug("Request body: " + requestJson.toString());
+            log.debug("Request body: " + requestJson);
             RequestBody requestBody = RequestBody.create(
                     MediaType.parse("application/json"), requestJson.toString());
 
@@ -192,7 +188,7 @@ public class ChatTranslator {
     public GetSupportedLanguagesResponseList getSupportedLanguages() throws GoogleException {
         if (authenticated) {
             return this.supportedLanguages;
-        } else { ;
+        } else {
             throw new GoogleAuthenticationException("You are not authenticated for Chat Translation.");
         }
     }

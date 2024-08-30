@@ -28,7 +28,7 @@ public class ChatTranslatorAuthPanel extends PluginPanel {
     private static final ImageIcon HELP_ICON;
 
     static {
-        final BufferedImage helpIcon = ImageUtil.getResourceStreamFromClass(ChatTranslatorPlugin.class, "/help.png");
+        final BufferedImage helpIcon = ImageUtil.loadImageResource(ChatTranslatorPlugin.class, "/help.png");
         HELP_ICON = new ImageIcon(ImageUtil.resizeImage(helpIcon, 16, 16));
     }
 

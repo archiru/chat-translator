@@ -10,13 +10,14 @@ import com.google.inject.Provides;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.events.*;
 import net.runelite.api.vars.InputType;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -28,7 +29,6 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.Text;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -71,7 +71,11 @@ public class ChatTranslatorPlugin extends Plugin {
 
     /**
      * The user interface panel.
+     * -- GETTER --
+     *
+
      */
+    @Getter
     @Inject
     private ChatTranslatorPanel panel;
 
@@ -100,7 +104,7 @@ public class ChatTranslatorPlugin extends Plugin {
     private ClientToolbar clientToolbar;
 
     /**
-     * The config for the the plugin.
+     * The config for the plugin.
      */
     @Inject
     private ChatTranslatorConfig config;
@@ -132,7 +136,7 @@ public class ChatTranslatorPlugin extends Plugin {
         }
 
         // Add the panel nav button to the client toolbar
-        final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "/panel_icon.png");
+        final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "/panel_icon.png");
         this.navButton = NavigationButton.builder()
                 .tooltip("Chat Translator")
                 .icon(icon)
@@ -156,7 +160,7 @@ public class ChatTranslatorPlugin extends Plugin {
     }
 
     @Subscribe
-    public void onMenuOpened(MenuOpened event) throws Exception {
+    public void onMenuOpened(MenuOpened event) {
         if (!this.config.isStandardTranslationEnabled()) return;
 
         if (isHoveringChatBoxWidget()) {
@@ -166,7 +170,7 @@ public class ChatTranslatorPlugin extends Plugin {
                 return;
             }
 
-            // Inject the translate menu entry
+            // Inject the translation menu entry
             this.menuEntry = new ChatTranslatorMenuEntry(config);
             ChatLineData chatData = null;
             if (isHoveringChatInputWidget()) {
@@ -182,7 +186,7 @@ public class ChatTranslatorPlugin extends Plugin {
             if (chatData == null || chatData.getChatLine().isEmpty()) {
                 return;
             }
-            client.createMenuEntry(-1)
+            client.getMenu().createMenuEntry(-1)
                 .setType(MenuAction.RUNELITE)
                 .setTarget("")
                 .setOption(menuEntry.getOption());
@@ -192,7 +196,7 @@ public class ChatTranslatorPlugin extends Plugin {
     }
 
     @Subscribe
-    public void onMenuOptionClicked(MenuOptionClicked event) throws Exception {
+    public void onMenuOptionClicked(MenuOptionClicked event) {
         if (!translator.isAuthenticated()) {
             clientThread.invokeLater(() -> {
                 client.addChatMessage(ChatMessageType.GAMEMESSAGE, "",
@@ -295,7 +299,7 @@ public class ChatTranslatorPlugin extends Plugin {
     }
 
     @Subscribe
-    public void onConfigChanged(ConfigChanged configChanged) throws Exception {
+    public void onConfigChanged(ConfigChanged configChanged) {
         if (configChanged.getKey().equals("previewChatInput")) {
             if (!config.isPreviewingChatInput()) {
                 stopPreview();
@@ -304,7 +308,7 @@ public class ChatTranslatorPlugin extends Plugin {
     }
 
     @Subscribe
-    public void onVarClientStrChanged(VarClientStrChanged varClientStrChanged) throws Exception {
+    public void onVarClientStrChanged(VarClientStrChanged varClientStrChanged) {
         // Return if the user does not want to preview chat
         if (!config.isPreviewingChatInput()) return;
 
@@ -319,12 +323,12 @@ public class ChatTranslatorPlugin extends Plugin {
             // 1 : User sends the chatline
             // 2 : User hits backspace when the chatline is already empty
             if (!this.lastPreviewText.isEmpty() && userInput.isEmpty()) {
-                clientThread.invokeLater(() -> stopPreview());
+                clientThread.invokeLater(this::stopPreview);
                 return;
             }
             // 3 : User input length is longer than the translation length
             if (userInput.length() > previewTranslation.length()) {
-                clientThread.invokeLater(() -> stopPreview());
+                clientThread.invokeLater(this::stopPreview);
                 return;
             }
             // 4 : The last several characters in a row entered do not match the translation
@@ -339,7 +343,7 @@ public class ChatTranslatorPlugin extends Plugin {
                     }
                 }
                 if (incorrect == incorrectMax) {
-                    clientThread.invokeLater(() -> stopPreview());
+                    clientThread.invokeLater(this::stopPreview);
                     return;
                 }
             }
@@ -348,13 +352,6 @@ public class ChatTranslatorPlugin extends Plugin {
             clientThread.invokeLater(() -> writeChatInput(getChatInputPreviewText()));
         }
 
-    }
-
-    /**
-     * @return the panel
-     */
-    public ChatTranslatorPanel getPanel() {
-        return this.panel;
     }
 
     /**
@@ -374,7 +371,7 @@ public class ChatTranslatorPlugin extends Plugin {
      * @return true if the user is hovering over the chat box, false otherwise
      */
     private boolean isHoveringChatBoxWidget() {
-        Widget chatBoxWidget = this.client.getWidget(WidgetInfo.CHATBOX);
+        Widget chatBoxWidget = this.client.getWidget(ComponentID.CHATBOX_FRAME);
         if (chatBoxWidget == null) return false;
         return isMouseOverWidget(chatBoxWidget);
     }
@@ -385,7 +382,7 @@ public class ChatTranslatorPlugin extends Plugin {
      * @return true if the user is hovering over their own chat input, false otherwise
      */
     private boolean isHoveringChatInputWidget() {
-        Widget chatInputWidget = this.client.getWidget(WidgetInfo.CHATBOX_INPUT);
+        Widget chatInputWidget = this.client.getWidget(ComponentID.CHATBOX_INPUT);
         if (chatInputWidget == null) return false;
         return isMouseOverWidget(chatInputWidget);
     }
@@ -396,7 +393,7 @@ public class ChatTranslatorPlugin extends Plugin {
      * @return true if the user is hovering over a message in the chat box, false otherwise
      */
     private boolean isHoveringChatLineWidget() {
-        Widget chatLinesWidget = this.client.getWidget(WidgetInfo.CHATBOX_MESSAGE_LINES);
+        Widget chatLinesWidget = this.client.getWidget(ComponentID.CHATBOX_MESSAGE_LINES);
         if (chatLinesWidget == null) return false;
         return isMouseOverWidget(chatLinesWidget);
     }
@@ -409,12 +406,12 @@ public class ChatTranslatorPlugin extends Plugin {
     private @Nullable
     ChatLineData getHoveredChatLineData() {
         try {
-            Widget chatBox = this.client.getWidget(WidgetInfo.CHATBOX_MESSAGE_LINES);
-            // This magic will get all of the chat lines in the chat box and filter it down to the chat line hovered over
+            Widget chatBox = this.client.getWidget(ComponentID.CHATBOX_MESSAGE_LINES);
+            // This magic will get all the chat lines in the chat box and filter it down to the chat line hovered over
             // by the mouse and then remove all formatting and join the "username:" widget text to the " message" widget text.
             String chatLine = Stream.of(chatBox.getChildren())
                     .filter(widget -> !widget.isHidden())
-                    .filter(widget -> widget.getId() < WidgetInfo.CHATBOX_FIRST_MESSAGE.getId())
+                    .filter(widget -> widget.getId() < ComponentID.CHATBOX_FIRST_MESSAGE)
                     .filter(widget -> {
                         int mouseY = this.client.getMouseCanvasPosition().getY();
                         return (mouseY >= widget.getBounds().getMinY() && mouseY <= widget.getBounds().getMaxY());
@@ -475,7 +472,7 @@ public class ChatTranslatorPlugin extends Plugin {
      */
     private ChatMessageType getVisibleChatMessageType() {
         try {
-            Widget chatBox = this.client.getWidget(WidgetInfo.CHATBOX_BUTTONS);
+            Widget chatBox = this.client.getWidget(ComponentID.CHATBOX_BUTTONS);
 
             List<Widget> chatBuckets = Stream.of(chatBox.getStaticChildren())
                     .map(Widget::getStaticChildren)
@@ -486,16 +483,16 @@ public class ChatTranslatorPlugin extends Plugin {
                     .filter(widget -> widget.getSpriteId() == 1022)
                     .collect(Collectors.toList());
 
-            if (chatBuckets.size() > 0) {
+            if (!chatBuckets.isEmpty()) {
                 Widget activePebble = chatBuckets.get(0);
                 Widget tabPebble = activePebble.getParent().getParent();
-                if (this.client.getWidget(WidgetInfo.CHATBOX_TAB_CLAN).equals(tabPebble)) {
+                if (this.client.getWidget(ComponentID.CHATBOX_TAB_CLAN).equals(tabPebble)) {
                     return ChatMessageType.FRIENDSCHAT;
-                } else if (this.client.getWidget(WidgetInfo.CHATBOX_TAB_PRIVATE).equals(tabPebble)) {
+                } else if (this.client.getWidget(ComponentID.CHATBOX_TAB_PRIVATE).equals(tabPebble)) {
                     return ChatMessageType.PRIVATECHAT;
-                } else if (this.client.getWidget(WidgetInfo.CHATBOX_TAB_PUBLIC).equals(tabPebble)) {
+                } else if (this.client.getWidget(ComponentID.CHATBOX_TAB_PUBLIC).equals(tabPebble)) {
                     return ChatMessageType.PUBLICCHAT;
-                } else if (this.client.getWidget(WidgetInfo.CHATBOX_TAB_TRADE).equals(tabPebble)) {
+                } else if (this.client.getWidget(ComponentID.CHATBOX_TAB_TRADE).equals(tabPebble)) {
                     return ChatMessageType.TRADE;
                 }
             }
@@ -514,7 +511,7 @@ public class ChatTranslatorPlugin extends Plugin {
     private void stagePreview(String translation) {
         try {
             //  Clear the chat input
-            int inputType = client.getVar(VarClientInt.INPUT_TYPE);
+            int inputType = client.getVarbitValue(VarClientInt.INPUT_TYPE);
             if (inputType == InputType.NONE.getType()) {
                 // Clear the chat input in preparation for chat preview
                 client.setVarcStrValue(VarClientStr.CHATBOX_TYPED_TEXT, "");
@@ -567,7 +564,7 @@ public class ChatTranslatorPlugin extends Plugin {
     private void writeChatInput(String text) {
         try {
             // Replace the visible chatline input with a preview
-            Widget chatBuffer = client.getWidget(WidgetInfo.CHATBOX_INPUT);
+            Widget chatBuffer = client.getWidget(ComponentID.CHATBOX_INPUT);
 
             StringBuilder rawChatInput = new StringBuilder();
             rawChatInput.append(client.getLocalPlayer().getName());
@@ -600,11 +597,11 @@ public class ChatTranslatorPlugin extends Plugin {
 
             StringBuilder translationPreviewColoring = new StringBuilder();
             for (int i = 0; i < previewTranslation.length(); i++) {
-                Character correct = previewTranslation.charAt(i);
+                char correct = previewTranslation.charAt(i);
 
                 if (i < userInput.length()) {
                     // User typed a character at this index
-                    Character user = userInput.charAt(i);
+                    char user = userInput.charAt(i);
                     if (Character.toLowerCase(user) == Character.toLowerCase(correct)) {
                         // With highlighting
                         if (this.config.isTranslationHighlighted()) {

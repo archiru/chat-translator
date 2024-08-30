@@ -1,5 +1,7 @@
 package com.chattranslator;
 
+import lombok.Getter;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -9,7 +11,7 @@ import javax.annotation.Nullable;
  * @version January 2021
  * @author <a href="https://spencer.imbleau.com">Spencer Imbleau</a>
  */
-class ChatLineData {
+public class ChatLineData {
 
     /**
      * The RuneScape name of the player being translated
@@ -18,7 +20,11 @@ class ChatLineData {
 
     /**
      * The chat line text being translated.
+     * -- GETTER --
+     *
+
      */
+    @Getter
     private final String chatLine;
 
     /**
@@ -72,13 +78,6 @@ class ChatLineData {
     public @Nullable
     String getRSN() {
         return this.rsn;
-    }
-
-    /**
-     * @return the text being translated
-     */
-    public String getChatLine() {
-        return chatLine;
     }
 
     /**

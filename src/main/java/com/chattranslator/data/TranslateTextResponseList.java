@@ -1,12 +1,12 @@
 package com.chattranslator.data;
 
-import com.chattranslator.ChatTranslatorMenuEntry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -102,9 +102,8 @@ public class TranslateTextResponseList {
      * @param json the JSON source of this object, e.g.
      *             <pre>{"translations": [array(TranslateTextResponseTranslation)],}</pre>
      * @return an instance of this class on successful parsing
-     * @throws Exception on parse failure
      */
-    public static TranslateTextResponseList fromJSONImplicit(final JsonElement json) throws Exception {
+    public static TranslateTextResponseList fromJSONImplicit(final JsonElement json) {
         JsonObject jsonObject = json.getAsJsonObject();
         JsonArray translations = jsonObject.getAsJsonArray("translations");
 
@@ -112,7 +111,7 @@ public class TranslateTextResponseList {
                 .range(0, translations.size())
                 .mapToObj(translations::get)
                 .map(TranslateTextResponseTranslation::fromJSONImplicit)
-                .filter(obj -> obj != null)
+                .filter(Objects::nonNull)
                 .toArray(TranslateTextResponseTranslation[]::new);
 
         return new TranslateTextResponseList(response);

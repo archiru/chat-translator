@@ -1,5 +1,6 @@
 package com.chattranslator;
 
+import lombok.Getter;
 import net.runelite.client.util.ColorUtil;
 
 import javax.annotation.Nonnull;
@@ -48,7 +49,11 @@ public class ChatTranslatorMenuEntry {
 
     /**
      * The data being used for translation in this menu option.
+     * -- GETTER --
+     *
+
      */
+    @Getter
     private ChatLineData chatLineData;
 
     /**
@@ -72,13 +77,6 @@ public class ChatTranslatorMenuEntry {
      */
     public void setChatLineData(ChatLineData chatLineData) {
         this.chatLineData = chatLineData;
-    }
-
-    /**
-     * @return the data being used for translation
-     */
-    public ChatLineData getChatLineData() {
-        return this.chatLineData;
     }
 
     /**

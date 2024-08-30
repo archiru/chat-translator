@@ -48,10 +48,10 @@ public class ChatTranslatorAPIKeyDialog extends JFrame {
         this.setResizable(false);
 
         // Set frame icons
-        final BufferedImage icon128 = ImageUtil.getResourceStreamFromClass(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_128.png");
-        final BufferedImage icon64 = ImageUtil.getResourceStreamFromClass(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_64.png");
-        final BufferedImage icon32 = ImageUtil.getResourceStreamFromClass(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_32.png");
-        final BufferedImage icon16 = ImageUtil.getResourceStreamFromClass(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_16.png");
+        final BufferedImage icon128 = ImageUtil.loadImageResource(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_128.png");
+        final BufferedImage icon64 = ImageUtil.loadImageResource(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_64.png");
+        final BufferedImage icon32 = ImageUtil.loadImageResource(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_32.png");
+        final BufferedImage icon16 = ImageUtil.loadImageResource(ChatTranslatorAPIKeyDialog.class, "/frame_icons/auth_16.png");
         Collections.addAll(FRAME_ICONS, icon128, icon64, icon32, icon16);
         this.setIconImages(FRAME_ICONS);
 

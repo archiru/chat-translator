@@ -40,7 +40,6 @@ public class GetSupportedLanguagesResponseLanguage {
      * @param json the JSON source of this object, e.g.
      *             <pre>{"language": string, "name": string,}</pre>
      * @return an instance of this class on successful parsing
-     * @throws Exception on parse failure
      */
     public @Nullable
     static GetSupportedLanguagesResponseLanguage fromJSON(final JsonElement json) {

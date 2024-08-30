@@ -27,7 +27,7 @@ public class ChatTranslatorHeaderPanel  extends PluginPanel {
     private static final ImageIcon DONATE_BUTTON;
     static
     {
-        final BufferedImage donateIcon = ImageUtil.getResourceStreamFromClass(ChatTranslatorPlugin.class, "/donate.png");
+        final BufferedImage donateIcon = ImageUtil.loadImageResource(ChatTranslatorPlugin.class, "/donate.png");
         DONATE_BUTTON = new ImageIcon(ImageUtil.resizeImage(donateIcon, 20, 20));
 
     }

@@ -38,10 +38,10 @@
      - Will translating cost you? **Short answer: Probably not.**
      At the time of writing this, you receive 500,000 characters of translation free every month. But their [pricing](https://cloud.google.com/translate/pricing) may change, so check. Unless you plan on translating that much, you pay __nothing__. If you used my referral link, you were also gifted the amount of 18,000,000 characters of translation for the first 3 months for free.
 
-        | Monthly Usage | Price |
-        | ------ | ----- |
+        | Monthly Usage        | Price                                    |
+        |----------------------|------------------------------------------|
         | < 500,000 characters | Free (applied as $10 credit every month) |
-        | > 500,000 characters | $20 per million characters |
+        | > 500,000 characters | $20 per million characters               |
 
   4. [Enable the Google Cloud Translate API](https://console.cloud.google.com/flows/enableapi?apiid=translate.googleapis.com).
     

@@ -36,7 +36,6 @@ public class TranslateTextResponseTranslation {
      * @param json the JSON source of this object, e.g.
      *             <pre>{"detectedSourceLanguage": string,"translatedText": string,}</pre>
      * @return an instance of this class on successful parsing
-     * @throws Exception on parse failure
      */
     public @Nullable
     static TranslateTextResponseTranslation fromJSONImplicit(final JsonElement json) {
@@ -60,7 +59,6 @@ public class TranslateTextResponseTranslation {
      * @param json the JSON source of this object, e.g.
      *             <pre>{"detectedSourceLanguage": string,}</pre>
      * @return an instance of this class on successful parsing
-     * @throws Exception on parse failure
      */
     public @Nullable
     static TranslateTextResponseTranslation fromJSONExplicit(JsonElement json, String sourceLanguage) {
