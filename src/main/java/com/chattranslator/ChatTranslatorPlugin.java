@@ -312,8 +312,8 @@ public class ChatTranslatorPlugin extends Plugin {
         if (this.previewTranslation == null) return;
 
         // Update the preview
-        if (varClientStrChanged.getIndex() == VarClientStr.CHATBOX_TYPED_TEXT.getIndex()) {
-            String userInput = client.getVar(VarClientStr.CHATBOX_TYPED_TEXT);
+        if (varClientStrChanged.getIndex() == VarClientStr.CHATBOX_TYPED_TEXT) {
+            String userInput = client.getVarcStrValue(VarClientStr.CHATBOX_TYPED_TEXT);
 
             // Conditions to cancel a preview when typing:
             // 1 : User sends the chatline
@@ -459,7 +459,7 @@ public class ChatTranslatorPlugin extends Plugin {
     ChatLineData getLocalPlayerChatLineData() {
         try {
             String rsn = this.client.getLocalPlayer().getName();
-            String chatInput = client.getVar(VarClientStr.CHATBOX_TYPED_TEXT);
+            String chatInput = client.getVarcStrValue(VarClientStr.CHATBOX_TYPED_TEXT);
             return new ChatLineData(rsn, chatInput, true);
         } catch (Exception e) {
             return null;
@@ -517,7 +517,7 @@ public class ChatTranslatorPlugin extends Plugin {
             int inputType = client.getVar(VarClientInt.INPUT_TYPE);
             if (inputType == InputType.NONE.getType()) {
                 // Clear the chat input in preparation for chat preview
-                client.setVar(VarClientStr.CHATBOX_TYPED_TEXT, "");
+                client.setVarcStrValue(VarClientStr.CHATBOX_TYPED_TEXT, "");
                 client.runScript(ScriptID.CHAT_PROMPT_INIT);
             } else {
                 // User is typing in private chat or in a dialog, etc.
@@ -546,7 +546,7 @@ public class ChatTranslatorPlugin extends Plugin {
             this.lastPreviewText = null;
 
             // Return back to the normal state
-            String chatInput = client.getVar(VarClientStr.CHATBOX_TYPED_TEXT);
+            String chatInput = client.getVarcStrValue(VarClientStr.CHATBOX_TYPED_TEXT);
             final Color defaultTextColor = new Color(0x90, 0x90, 0xff);
             writeChatInput(ColorUtil.wrapWithColorTag(chatInput, defaultTextColor));
             log.debug("Stopped translation preview.");
@@ -596,7 +596,7 @@ public class ChatTranslatorPlugin extends Plugin {
     private @Nullable
     String getChatInputPreviewText() {
         try {
-            String userInput = client.getVar(VarClientStr.CHATBOX_TYPED_TEXT);
+            String userInput = client.getVarcStrValue(VarClientStr.CHATBOX_TYPED_TEXT);
 
             StringBuilder translationPreviewColoring = new StringBuilder();
             for (int i = 0; i < previewTranslation.length(); i++) {
